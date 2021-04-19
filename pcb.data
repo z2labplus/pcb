@@ -1,0 +1,6 @@
+  classes= 6
+  train  = ./scripts/2007_train.txt
+  #valid  = ./scripts/2007_test.txt #（做测试用的测试txt）
+  valid  = ./scripts/2007_val.txt
+  names = ./pcb.names
+  backup = backup/

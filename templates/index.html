@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<head>
+    <link rel="bookmark" type="image/x-icon" href="favicon.ico" />
+    <link rel="shortcut icon" href="favicon.ico">
+    <title>中二实验室-PCB瑕疵检测</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js" integrity="sha512-eYSzo+20ajZMRsjxB6L7eyqo5kuXuS2+wEbbOkpaur+sA2shQameiJiWEzCIDwJqaB0a4a6tCuEvCOBHUg3Skg==" crossorigin="anonymous"></script>
+    <style type="text/css">
+    #app {
+        width: 1240px;
+        margin: 0 auto;
+    }
+
+    #introduce {
+        margin-bottom: 10px;
+    }
+
+    #show {
+        float: left;
+        width: 1240px;
+        margin: 0 auto;
+        margin-bottom: 40px;
+
+    }
+
+    #show-left {
+        float: left;
+        width: 615px;
+    }
+
+    #show-right {
+        float: right;
+        width: 615px;
+    }
+
+    #raw-image {}
+
+    img {
+        width: 100%;
+    }
+
+    #button {
+        height: 50px;
+    }
+
+    #download {
+        left: 44px;
+        top: 10px;
+        text-decoration: none;
+        font-size: 24px;
+        color: #252423;
+        height: 64px;
+        padding: 4px 20px;
+        background-color: white;
+        border: 1px solid #48484e;
+        line-height: 1.2;
+        text-align: center;
+        border-radius: 60px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        outline: none;
+        position: relative;
+    }
+
+    .primary-btn {
+        top: 10px;
+        text-decoration: none;
+        font-size: 24px;
+        color: #252423;
+        height: 64px;
+        padding: 4px 20px;
+        background-color: white;
+        border: 1px solid #48484e;
+        line-height: 1.2;
+        text-align: center;
+        border-radius: 60px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        outline: none;
+        position: relative;
+    }
+
+    .primary-btn::before {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        border: inherit;
+        border-color: #000;
+        border-radius: inherit;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        content: ' ';
+    }
+
+    .primary-btn:active::before {
+        opacity: 0.1;
+    }
+
+    .blockOverlay {}
+
+    .blockPage {
+        border: none !important;
+    }
+
+    #video {
+        background-color: #13111161 !important;
+    }
+
+    #video video {
+        margin-left: 220px;
+    }
+
+    #introduce p {
+        margin-block-start: 0.5em !important;
+        margin-block-end: 0.5em !important;
+
+    }
+
+    #introduce h2 {
+        margin-block-start: 0.5em !important;
+        margin-block-end: 0.5em !important;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div id="introduce">
+            <h2>背景</h2>
+            <p>
+                PCB( Printed Circuit Board 印刷电路板)是电子产品中众多电子元器件的承载体，它为各电子元器件的秩序连接提供了可能，PCB已成为现代电子产品的核心部分。随着现代电子工业迅猛发展，电子技术不断革新，PCB密集度不断增大，层级越来越多，生产中因焊接缺陷的等各种原因，导致电路板的合格率降低影响整机质量的事故屡见不鲜。随着印刷电路板的精度、集成度、复杂度、以及数量的不断提高，PCB板的缺陷检测已成为整个电子行业中重要的检测内容。
+            </p>
+            <p>
+                当前，在 PCB 表面缺陷的检测方法中，主要有机械检测、射线检测，人工检测等，在上面的几种检测方法中，人工检测是最传统，也是效率最低的检测方法，其检测的准确率很大因素上取决于工人的经验，所以检测的准确率很难达到生产标准；而机械检测通常是采用接触式检测，在检测时需要调整 PCB 的位置以及角度来进行检测，造成时间成本的增大；射线检测能够对产品的缺陷进行很好的分辨，但是由于其设备结构复杂，造价成本高，因此实际的生产过程中使用并不广泛。随着 PCB 制造行业的迅速发展，对 PCB 工艺设计、质量要求等越来越高，其表面所产生的缺陷类型越来越多，对于检测的精度要求也越来越高。现在常用检测方法已经无法保证批量化生产过程中对 PCB 的质量要求，也不能准确检测 PCB 表面的 陷。基于深度学习方法的图像缺陷检测正广泛的被应用在工业生产过程中。
+            </p>
+            <h2>
+                FPN（特征金字塔网络）
+            </h2>
+            <p>
+                PCB电路板的检测属于典型的小目标检测问题，传统的深度学习方法rpn或fast rcnn都只适用于对大目标的检测，在小目标检测领域应用效果不佳（对于小目标来说，当进行卷积池化到最后一层，实际上语义信息已经没有了）。
+            </p>
+            <p>
+                FPN（feature pyramid networks）是一种独特的特征金字塔网络，它可以避免图像金字塔产生的超高计算量，同时可以较好的处理目标检测中的尺度变化问题，对于小目标检测具有很强的鲁棒性，对于PCB小目标瑕疵检测具有较佳的应用价值。
+            </p>
+        </div>
+        <hr />
+        <div id="video">
+            <video width="800" left="220" height="auto" controls="controls">
+                <source src="https://labdownload.obs.cn-north-4.myhuaweicloud.com:443/pcb.z2lab.com.mp4?AccessKeyId=N9NUDS9NNL773AP6HWDL&Expires=1646122374&Signature=aa11BJ7AcjFKiIEk4FKDQZPY1WE%3D" type="video/mp4">
+                <source src="movie.ogg" type="video/ogg">
+                <source src="movie.webm" type="video/webm">
+                <object data="movie.mp4" width="1240" height="auto">
+                    <embed src="movie.swf" width="1240" height="auto">
+                </object>
+            </video>
+        </div>
+        <hr />
+        <div id="button">
+            <a class="primary-btn" href="javascript:void(0)" onclick="uploadPhoto()">点击上传PCB图片</a>
+            <input type="file" id="photoFile" style="display: none;" onchange="upload()">
+            <a id="download" href="https://labdownload.obs.cn-north-4.myhuaweicloud.com:443/pcb_test.zip?AccessKeyId=N9NUDS9NNL773AP6HWDL&Expires=1645930917&Signature=7zWf1yR1Ip/31VmS4VJV2FMmgik%3D">下载测试PCB图片</a>
+        </div>
+        <hr />
+        <div id="show">
+            <div id="show-left">
+                <div id="raw-image">
+                    <img id="preview_photo" src="">
+                </div>
+            </div>
+            <div id="show-right">
+                <img id="result_name" src="">
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    function uploadPhoto() {
+        $("#photoFile").click();
+    }
+
+    /**
+     * 上传图片
+     */
+    function upload() {
+        if ($("#photoFile").val() == '') {
+            return;
+        }
+        var formData = new FormData();
+        formData.append('photo', document.getElementById('photoFile').files[0]);
+        $.ajax({
+            url: "https://pcb.z2lab.com/uploader",
+            timeout: 60000, //通过timeout属性，设置超时时间
+            type: "post",
+            data: formData,
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                // 图标转转转
+                $.blockUI({ message: '<h4 style="border-style: none;"><img style="width:40px;height:40px;" src="logo2s.gif" /> 正在上传、标注中,请稍等...</h4>' });
+            },
+            success: function(data) {
+                if (data.type == "success") {
+                    $("#preview_photo").attr("src", data.secure_name);
+                    $("#result_name").attr("src", data.result_name);
+                    $.unblockUI();
+                    $('html,body').animate({ scrollTop: $(document).height() }, 1000);
+
+
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function(data) {
+                alert("上传失败")
+            }
+        });
+    }
+    </script>
+</body>
+
+</html>

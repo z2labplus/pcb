@@ -1,0 +1,9 @@
+/root/darknet/CMakeFiles/install/strip.dir
+/root/darknet/CMakeFiles/install/local.dir
+/root/darknet/CMakeFiles/install.dir
+/root/darknet/CMakeFiles/uselib.dir
+/root/darknet/CMakeFiles/edit_cache.dir
+/root/darknet/CMakeFiles/rebuild_cache.dir
+/root/darknet/CMakeFiles/darknet.dir
+/root/darknet/CMakeFiles/dark.dir
+/root/darknet/CMakeFiles/list_install_components.dir

@@ -1,0 +1,2 @@
+/root/darknet/CMakeFiles/CheckCUDA/CMakeFiles/rebuild_cache.dir
+/root/darknet/CMakeFiles/CheckCUDA/CMakeFiles/edit_cache.dir
